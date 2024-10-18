@@ -3,8 +3,8 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  ManyToOne,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { User } from './user.entity'; // 导入 User 实体
 import { Question } from './question.entity'; // 导入 Question 实体
@@ -18,7 +18,7 @@ export class UserAnswer {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Question, (question) => question.id)
+  @ManyToOne(() => Question, (question) => question.userAnswers)
   @JoinColumn({ name: 'question_id' })
   question: Question;
 

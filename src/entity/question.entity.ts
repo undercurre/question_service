@@ -4,7 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { UserAnswer } from './user-answer.entity';
 
 @Entity('questions')
 export class Question {
@@ -16,6 +18,9 @@ export class Question {
 
   @Column('text')
   answer: string;
+
+  @OneToMany(() => UserAnswer, (userAnswer) => userAnswer.user)
+  userAnswers: UserAnswer[];
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
