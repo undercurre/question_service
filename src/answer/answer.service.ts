@@ -33,6 +33,18 @@ export class UserAnswerService {
     });
   }
 
+  async findAllByUserId(userId: string): Promise<UserAnswerDto[]> {
+    const userAnswers = await this.userAnswerRepository.find({
+      where: { user: { id: userId } },
+      relations: ['user', 'question'],
+    });
+    return userAnswers.map((userAnswer) =>
+      plainToInstance(UserAnswerDto, userAnswer, {
+        excludeExtraneousValues: true,
+      }),
+    );
+  }
+
   async create(userAnswer: Partial<UserAnswer>): Promise<UserAnswerDto> {
     const newUserAnswer = this.userAnswerRepository.create(userAnswer);
     const savedUserAnswer = await this.userAnswerRepository.save(newUserAnswer);

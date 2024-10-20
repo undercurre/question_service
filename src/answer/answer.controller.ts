@@ -20,6 +20,13 @@ export class UserAnswerController {
     return this.userAnswerService.findAll();
   }
 
+  @Get('user/:userId')
+  async findAllByUserId(
+    @Param('userId') userId: string,
+  ): Promise<UserAnswerDto[]> {
+    return this.userAnswerService.findAllByUserId(userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string): Promise<UserAnswerDto> {
     return this.userAnswerService.findOne(id);

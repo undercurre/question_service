@@ -15,7 +15,7 @@ export class UserAnswerDto {
   @Expose()
   userAnswer: string;
   @Expose()
-  score: number;
+  score?: number;
   @Expose()
   answeredAt: Date;
 }

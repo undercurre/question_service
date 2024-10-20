@@ -25,8 +25,8 @@ export class UserAnswer {
   @Column('text')
   userAnswer: string;
 
-  @Column('int')
-  score: number;
+  @Column('int', { nullable: true, default: 0 })
+  score?: number;
 
   @CreateDateColumn({ type: 'datetime' })
   answeredAt: Date;
