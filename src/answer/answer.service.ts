@@ -1,70 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserAnswer } from '../entity/user-answer.entity';
-import { UserAnswerDto } from '../dto/answer.dto';
-import { plainToInstance } from 'class-transformer';
+import { DailyExpense } from './daily-expenses.entity';
+import { CreateDailyExpenseDto } from './daily-expenses.dto';
 
 @Injectable()
-export class UserAnswerService {
+export class DailyExpensesService {
   constructor(
-    @InjectRepository(UserAnswer)
-    private userAnswerRepository: Repository<UserAnswer>,
+    @InjectRepository(DailyExpense)
+    private readonly dailyExpenseRepository: Repository<DailyExpense>,
   ) {}
 
-  async findAll(): Promise<UserAnswerDto[]> {
-    const userAnswers = await this.userAnswerRepository.find({
-      relations: ['user', 'question'],
-    });
-    return userAnswers.map((userAnswer) =>
-      plainToInstance(UserAnswerDto, userAnswer, {
-        excludeExtraneousValues: true,
-      }),
-    );
+  async create(
+    createDailyExpenseDto: CreateDailyExpenseDto,
+  ): Promise<DailyExpense> {
+    const expense = this.dailyExpenseRepository.create(createDailyExpenseDto);
+    return this.dailyExpenseRepository.save(expense);
   }
 
-  async findOne(id: string): Promise<UserAnswerDto> {
-    const userAnswer = await this.userAnswerRepository.findOne({
-      where: { id },
-      relations: ['user', 'question'],
-    });
-    return plainToInstance(UserAnswerDto, userAnswer, {
-      excludeExtraneousValues: true,
-    });
+  async createBatch(
+    createDailyExpenseDtos: CreateDailyExpenseDto[],
+  ): Promise<DailyExpense[]> {
+    const expenses = this.dailyExpenseRepository.create(createDailyExpenseDtos);
+    return this.dailyExpenseRepository.save(expenses); // 批量插入
   }
 
-  async findAllByUserId(userId: string): Promise<UserAnswerDto[]> {
-    const userAnswers = await this.userAnswerRepository.find({
+  async findAll(userId: string): Promise<DailyExpense[]> {
+    return this.dailyExpenseRepository.find({
       where: { user: { id: userId } },
-      relations: ['user', 'question'],
-    });
-    return userAnswers.map((userAnswer) =>
-      plainToInstance(UserAnswerDto, userAnswer, {
-        excludeExtraneousValues: true,
-      }),
-    );
-  }
-
-  async create(userAnswer: Partial<UserAnswer>): Promise<UserAnswerDto> {
-    const newUserAnswer = this.userAnswerRepository.create(userAnswer);
-    const savedUserAnswer = await this.userAnswerRepository.save(newUserAnswer);
-    return plainToInstance(UserAnswerDto, savedUserAnswer, {
-      excludeExtraneousValues: true,
+      relations: ['user'], // 关联用户信息
     });
   }
 
-  async update(
-    id: string,
-    userAnswer: Partial<UserAnswer>,
-  ): Promise<UserAnswerDto> {
-    await this.userAnswerRepository.update(id, userAnswer);
-    const updatedUserAnswer = await this.findOne(id);
-    return plainToInstance(UserAnswerDto, updatedUserAnswer, {
-      excludeExtraneousValues: true,
+  async findOne(id: string): Promise<DailyExpense> {
+    const expense = await this.dailyExpenseRepository.findOne({
+      where: { id },
+      relations: ['user'],
     });
+    if (!expense) {
+      throw new NotFoundException(`Daily expense with ID "${id}" not found.`);
+    }
+    return expense;
   }
 
   async remove(id: string): Promise<void> {
-    await this.userAnswerRepository.delete(id);
+    const result = await this.dailyExpenseRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Daily expense with ID "${id}" not found.`);
+    }
   }
 }

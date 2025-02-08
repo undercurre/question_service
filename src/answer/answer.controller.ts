@@ -2,51 +2,43 @@ import {
   Controller,
   Get,
   Post,
-  Put,
-  Delete,
   Body,
   Param,
+  Delete,
+  Query,
+  Request,
 } from '@nestjs/common';
-import { UserAnswerService } from './answer.service';
-import { UserAnswerDto } from '../dto/answer.dto';
-import { UserAnswer } from 'src/entity/user-answer.entity';
+import { AnswerService } from './answer.service';
+import { CreateAnswerDto } from './answer.dto';
 
-@Controller('user-answers')
-export class UserAnswerController {
-  constructor(private readonly userAnswerService: UserAnswerService) {}
+@Controller('daily-expenses')
+export class AnswerController {
+  constructor(private readonly answerService: AnswerService) {}
 
-  @Get()
-  findAll(): Promise<UserAnswerDto[]> {
-    return this.userAnswerService.findAll();
+  @Post()
+  async create(
+    @Body() createAnswerDto: Omit<CreateAnswerDto, 'userId'>,
+    @Request() req,
+  ) {
+    console.log(req.user);
+    return this.answerService.create({
+      userId: req.user.userId,
+      ...createAnswerDto,
+    });
   }
 
-  @Get('user/:userId')
-  async findAllByUserId(
-    @Param('userId') userId: string,
-  ): Promise<UserAnswerDto[]> {
-    return this.userAnswerService.findAllByUserId(userId);
+  @Get()
+  async findAll(@Query('userId') userId: string) {
+    return this.answerService.findAll(userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<UserAnswerDto> {
-    return this.userAnswerService.findOne(id);
-  }
-
-  @Post()
-  create(@Body() userAnswer: Partial<UserAnswer>): Promise<UserAnswerDto> {
-    return this.userAnswerService.create(userAnswer);
-  }
-
-  @Put(':id')
-  update(
-    @Param('id') id: string,
-    @Body() userAnswer: Partial<UserAnswer>,
-  ): Promise<UserAnswerDto> {
-    return this.userAnswerService.update(id, userAnswer);
+  async findOne(@Param('id') id: string) {
+    return this.answerService.findOne(id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.userAnswerService.remove(id);
+  async remove(@Param('id') id: string) {
+    return this.answerService.remove(id);
   }
 }

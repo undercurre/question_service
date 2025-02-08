@@ -8,7 +8,7 @@ import {
   Param,
 } from '@nestjs/common';
 import { QuestionService } from './question.service';
-import { Question } from '../entity/question.entity';
+import { Question } from './question.entity';
 
 @Controller('questions')
 export class QuestionController {

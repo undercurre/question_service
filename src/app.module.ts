@@ -4,14 +4,14 @@ import { AppService } from './app.service';
 import { QuestionModule } from './question/question.module';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import { ConfigModule } from '@nestjs/config/dist/config.module';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Question } from './entity/question.entity';
-import { UserAnswer } from './entity/user-answer.entity';
-import { UserAnswerModule } from './answer/answer.module';
-import { User } from './entity/user.entity';
+import { Question } from './question/question.entity';
+import { Answer } from './answer/answer.entity';
+import { AnswerModule } from './answer/answer.module';
+import { User } from './users/user.entity';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -27,14 +27,14 @@ import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [Question, UserAnswer, User],
+        entities: [Question, Answer, User],
         synchronize: true,
       }),
       inject: [ConfigService],
     }),
     AuthModule,
     QuestionModule,
-    UserAnswerModule,
+    AnswerModule,
   ],
   controllers: [AppController],
   providers: [

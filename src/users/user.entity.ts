@@ -5,10 +5,11 @@ import {
   BeforeInsert,
   UpdateDateColumn,
   PrimaryColumn,
-  OneToMany,
+  OneToOne,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 import SnowflakeId from 'snowflake-id';
-import { UserAnswer } from './user-answer.entity';
+import { Answer } from 'src/answer/answer.entity';
 
 const snowflake = new SnowflakeId({
   mid: 42,
@@ -23,9 +24,11 @@ export class User {
   @Column({ unique: true })
   username: string;
 
+  @Exclude() // 这个字段将不会被序列化
   @Column()
   password: string;
 
+  @Exclude() // 这个字段将不会被序列化
   @Column()
   salt: string;
 
@@ -41,8 +44,8 @@ export class User {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToMany(() => UserAnswer, (userAnswer) => userAnswer.user)
-  userAnswers: UserAnswer[];
+  @OneToOne(() => Answer, (answer) => answer.user)
+  answer: Answer;
 
   @BeforeInsert()
   generateId() {
