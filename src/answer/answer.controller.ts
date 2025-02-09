@@ -7,11 +7,13 @@ import {
   Delete,
   Query,
   Request,
+  Put,
 } from '@nestjs/common';
 import { AnswerService } from './answer.service';
-import { CreateAnswerDto } from './answer.dto';
+import { CreateAnswerDto, UpdateAnswerDto } from './answer.dto';
+import { Answer } from './answer.entity';
 
-@Controller('daily-expenses')
+@Controller('answers')
 export class AnswerController {
   constructor(private readonly answerService: AnswerService) {}
 
@@ -28,13 +30,21 @@ export class AnswerController {
   }
 
   @Get()
-  async findAll(@Query('userId') userId: string) {
-    return this.answerService.findAll(userId);
+  async findAll(@Request() req) {
+    return this.answerService.findAll(req.user.userId);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.answerService.findOne(id);
+  }
+
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() answer: UpdateAnswerDto,
+  ): Promise<Answer> {
+    return this.answerService.update(id, answer);
   }
 
   @Delete(':id')

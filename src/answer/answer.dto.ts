@@ -21,3 +21,17 @@ export class CreateAnswerDto {
   @IsString()
   description?: string;
 }
+
+export class UpdateAnswerDto {
+  @IsNotEmpty()
+  @IsNumber()
+  score: number;
+
+  @IsNotEmpty()
+  @IsString()
+  content: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+}

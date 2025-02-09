@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { Question } from './question.entity';
+import { CreateQuestionDto, UpdateQuestionDto } from './question.dto';
 
 @Controller('questions')
 export class QuestionController {
@@ -25,14 +26,14 @@ export class QuestionController {
   }
 
   @Post()
-  create(@Body() question: Partial<Question>): Promise<Question> {
+  create(@Body() question: CreateQuestionDto): Promise<Question> {
     return this.questionService.create(question);
   }
 
   @Put(':id')
   update(
     @Param('id') id: string,
-    @Body() question: Partial<Question>,
+    @Body() question: UpdateQuestionDto,
   ): Promise<Question> {
     return this.questionService.update(id, question);
   }

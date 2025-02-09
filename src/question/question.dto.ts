@@ -1,10 +1,21 @@
-import { Expose } from 'class-transformer';
+import { IsString, IsNotEmpty } from 'class-validator';
 
-export class QuestionDto {
-  @Expose()
-  id: string;
-  @Expose()
+export class CreateQuestionDto {
+  @IsNotEmpty()
+  @IsString()
   content: string;
-  @Expose()
-  answer: string;
+
+  @IsNotEmpty()
+  @IsString()
+  standard: string;
+}
+
+export class UpdateQuestionDto {
+  @IsNotEmpty()
+  @IsString()
+  content: string;
+
+  @IsNotEmpty()
+  @IsString()
+  standard: string;
 }
