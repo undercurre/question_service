@@ -44,6 +44,7 @@ export class AnswerService {
   async findAll(userId: string): Promise<Answer[]> {
     return this.answerRepository.find({
       where: { user: { id: userId } },
+      relations: ['question'],
     });
   }
 
